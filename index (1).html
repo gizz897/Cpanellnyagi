@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Panel By agi | Pterodactyl</title>
+
+<style>
+:root{
+  --bg1:#020617;
+  --bg2:#0f172a;
+  --card:rgba(15,23,42,.75);
+  --border:rgba(255,255,255,.08);
+  --primary:#22c55e;
+  --blue:#3b82f6;
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+}
+
+*{box-sizing:border-box;font-family:'Inter','Segoe UI',sans-serif}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(600px circle at top,#1e293b,transparent),
+    linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+/* GLASS CARD */
+.card{
+  width:100%;
+  max-width:420px;
+  background:var(--card);
+  backdrop-filter:blur(16px);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:28px;
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
+}
+
+h2,h3{
+  text-align:center;
+  margin:0 0 10px;
+}
+
+p{
+  text-align:center;
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:20px;
+}
+
+/* INPUT */
+input,select{
+  width:100%;
+  margin-top:12px;
+  padding:14px;
+  border-radius:12px;
+  background:rgba(2,6,23,.7);
+  border:1px solid var(--border);
+  color:var(--text);
+  outline:none;
+}
+
+input:focus,select:focus{
+  border-color:var(--blue);
+}
+
+/* BUTTON */
+button,a{
+  width:100%;
+  margin-top:18px;
+  padding:14px;
+  border-radius:14px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+  text-decoration:none;
+  text-align:center;
+  display:block;
+}
+
+.btn-green{
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#022c22;
+}
+.btn-blue{
+  background:linear-gradient(135deg,#3b82f6,#2563eb);
+  color:white;
+}
+.btn-gray{
+  background:#334155;
+  color:white;
+}
+
+/* POPUP */
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.85);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  z-index:10;
+}
+
+.popup-box{
+  width:100%;
+  max-width:380px;
+  background:var(--card);
+  backdrop-filter:blur(18px);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 40px 90px rgba(0,0,0,.7);
+}
+
+/* DATA */
+.data{
+  background:rgba(2,6,23,.6);
+  padding:12px;
+  border-radius:10px;
+  margin-top:10px;
+  font-size:14px;
+}
+
+/* LOADER */
+.loader{
+  width:44px;
+  height:44px;
+  border:4px solid #1e293b;
+  border-top:4px solid var(--primary);
+  border-radius:50%;
+  margin:20px auto;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* DASHBOARD */
+.dashboard{display:none}
+.server{
+  background:rgba(2,6,23,.6);
+  padding:14px;
+  border-radius:12px;
+  margin-top:12px;
+  display:flex;
+  justify-content:space-between;
+}
+.on{color:#22c55e}
+.off{color:#eab308}
+</style>
+</head>
+
+<body>
+
+<!-- CREATE PANEL -->
+<div class="card" id="createPage">
+  <h2>🚀 Create Panel</h2>
+  <p>Silahkan Isi Data Panel Gratis</p>
+
+  <input id="username" placeholder="Username Panel">
+  <input id="password" type="password" placeholder="Password Panel">
+
+  <select id="ram">
+    <option value="">Select RAM</option>
+    <option>1 GB</option>
+    <option>2 GB</option>
+    <option>3 GB</option>
+    <option>4 GB</option>
+    <option>5 GB</option>
+    <option>6 GB</option>
+    <option>7 GB</option>
+    <option>8 GB</option>
+    <option>9 GB</option>
+    <option>10 GB</option>
+    <option>Unlimited</option>
+  </select>
+
+  <select id="cpu">
+    <option value="">Select CPU</option>
+    <option>50%</option>
+    <option>100%</option>
+    <option>200%</option>
+    <option>400%</option>
+    <option>Unlimited</option>
+  </select>
+
+  <button class="btn-green" onclick="createPanel()">Buat Panel</button>
+</div>
+
+<!-- JOIN -->
+<div class="popup" id="joinPopup">
+  <div class="popup-box">
+    <h3>🔒 Access Required</h3>
+    <p>Join channel terlebih dahulu</p>
+
+    <a class="btn-blue" href="https://t.me/testimoni_agi" target="_blank" onclick="markJoined()">
+      Join
+    </a>
+
+    <button class="btn-gray" onclick="confirmJoin()">Saya Sudah Join</button>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="popup" id="loadingPopup">
+  <div class="popup-box" style="text-align:center">
+    <h3>Creating Panel</h3>
+    <div class="loader"></div>
+    <p>Allocating resources…</p>
+  </div>
+</div>
+
+<!-- DATA -->
+<div class="popup" id="dataPopup">
+  <div class="popup-box">
+    <h3>📄 Panel Information</h3>
+
+    <div class="data"><b>Username:</b> <span id="dUser"></span></div>
+    <div class="data"><b>Password:</b> <span id="dPass"></span></div>
+    <div class="data"><b>RAM:</b> <span id="dRam"></span></div>
+    <div class="data"><b>CPU:</b> <span id="dCpu"></span></div>
+
+    <a class="btn-blue" href="https://client.deline.cloud" target="_blank">
+      Login Panel
+    </a>
+
+    <button class="btn-gray" onclick="goDashboard()">Masuk Dashboard</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="card dashboard" id="dashboard">
+  <h3>🖥️ Dashboard</h3>
+  <p>Status: <b class="on">Active</b></p>
+
+  <div class="server"><span>NodeJS Bot</span><span class="on">Running</span></div>
+  <div class="server"><span>Minecraft Server</span><span class="off">Stopped</span></div>
+</div>
+
+<script>
+let joined=false;
+
+function createPanel(){
+  if(!username.value||!password.value||!ram.value||!cpu.value){
+    alert("Semua data wajib diisi!");
+    return;
+  }
+  if(!joined){
+    joinPopup.style.display="flex";
+    return;
+  }
+  loadingPopup.style.display="flex";
+  setTimeout(()=>{
+    loadingPopup.style.display="none";
+    dUser.innerText=username.value;
+    dPass.innerText=password.value;
+    dRam.innerText=ram.value;
+    dCpu.innerText=cpu.value;
+    dataPopup.style.display="flex";
+  },2000);
+}
+
+function markJoined(){setTimeout(()=>joined=true,800)}
+function confirmJoin(){
+  if(!joined){alert("Join channel dulu!");return;}
+  joinPopup.style.display="none";
+  createPanel();
+}
+function goDashboard(){
+  dataPopup.style.display="none";
+  createPage.style.display="none";
+  dashboard.style.display="block";
+}
+</script>
+
+</body>
+</html>
